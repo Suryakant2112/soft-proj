@@ -1,4 +1,3 @@
-# train.py
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -57,8 +56,7 @@ def evaluate_epoch(model, dataloader, criterion, device):
     
     return epoch_loss / len(dataloader), mae, acc_2, f1_2
 
-# --- 7. RUN EVERYTHING (FROM 'train.py') ---
-print("\n--- Initializing Model and DataLoaders ---")
+print("\n Initializing Model and DataLoaders")
 
 # Create DataLoaders
 train_dataset = MOSIDataset(train_data)
@@ -89,17 +87,12 @@ for epoch in range(1, EPOCHS + 1):
     print(f'\tValid Loss: {valid_loss:.3f} | Valid MAE: {valid_mae:.3f}')
     print(f'\tValid Acc-2: {valid_acc*100:.2f}% | Valid F1: {valid_f1:.3f}')
 
-# Final Test
 test_loss, test_mae, test_acc, test_f1 = evaluate_epoch(model, test_loader, criterion, device)
 print("\n--- Testing Complete ---")
 print(f'Test Loss: {test_loss:.3f} | Test MAE: {test_mae:.3f}')
 print(f'Test Acc-2: {test_acc*100:.2f}% | Test F1: {test_f1:.3f}')
 
-print("\n--- Script Finished ---")
-
-if __name__ == '__main__':
-    print("\n--- Training Pipeline Starting ---\n")
-    # (your full training loop here)
+print("\n Training Complete ")
 
 torch.save(model.state_dict(), 'best_model.pth')
 print("Model saved to best_model.pth")

@@ -7,15 +7,13 @@ from sklearn.metrics import mean_absolute_error, f1_score, accuracy_score
 import numpy as np
 import pickle
 
-# --- 1. SETTINGS AND HYPERPARAMETERS ---
 DATA_PATH = 'mosi_data.pkl'
 BATCH_SIZE = 32
 EPOCHS = 20
 LEARNING_RATE = 1e-4
 HIDDEN_DIM = 64
-OUTPUT_DIM = 1  # Regression task, so 1 output
+OUTPUT_DIM = 1
 
-# --- 2. LOAD DATA (FROM 'load_data.py') ---
 print(f"Loading data from {DATA_PATH}...")
 try:
     with open(DATA_PATH, 'rb') as f:
@@ -28,30 +26,26 @@ except Exception as e:
 
 print("Data loaded successfully.")
 
-# Extract Data Splits
 train_data = data['train']
 valid_data = data['valid']
 test_data = data['test']
 
 print(f"Keys in 'train' split: {train_data.keys()}")
 
-# Extract Modalities
 train_text = train_data['text']
 train_audio = train_data['audio']
-train_video = train_data['vision']  # <-- FIXED KEY 'vision'
+train_video = train_data['vision']
 train_labels = train_data['labels']
 
-# Get Feature Dimensions
 TEXT_DIM = train_text[0].shape[1]
 AUDIO_DIM = train_audio[0].shape[1]
-VIDEO_DIM = train_video[0].shape[1]  # <-- FIXED KEY 'vision'
+VIDEO_DIM = train_video[0].shape[1]
 
 print(f"\n--- Detected Feature Dimensions ---")
 print(f"TEXT_DIM = {TEXT_DIM}")
 print(f"AUDIO_DIM = {AUDIO_DIM}")
 print(f"VIDEO_DIM = {VIDEO_DIM}")
 
-# --- Export variables for import in other files ---
 __all__ = [
     'train_data', 'valid_data', 'test_data',
     'TEXT_DIM', 'AUDIO_DIM', 'VIDEO_DIM',

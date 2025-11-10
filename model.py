@@ -1,15 +1,13 @@
-# model.py
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
 from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
 
-# --- 3. DEFINE DATASET CLASS (FROM 'model.py') ---
 class MOSIDataset(Dataset):
     def __init__(self, data_split):
         self.text_data = data_split['text']
         self.audio_data = data_split['audio']
-        self.video_data = data_split['vision']  # <-- FIXED KEY 'vision'
+        self.video_data = data_split['vision']
         self.labels = data_split['labels']
         self.n_samples = len(self.labels)
 
@@ -17,9 +15,6 @@ class MOSIDataset(Dataset):
         return self.n_samples
 
     def __getitem__(self, index):
-        # We assume labels are nested, e.g., [1.25]
-        # If your labels are [[1.25]], change to self.labels[index][0][0]
-        # If your labels are 1.25, change to self.labels[index]
         return {
             'text': torch.tensor(self.text_data[index], dtype=torch.float32),
             'audio': torch.tensor(self.audio_data[index], dtype=torch.float32),
@@ -27,11 +22,10 @@ class MOSIDataset(Dataset):
             'label': torch.tensor(self.labels[index][0], dtype=torch.float32)
         }
 
-# --- 4. DEFINE COLLATE FUNCTION (FROM 'model.py') ---
 def collate_fn(batch):
     text_data = [item['text'] for item in batch]
     audio_data = [item['audio'] for item in batch]
-    video_data = [item['video'] for item in batch]  # <-- FIXED KEY 'vision' (in Dataset)
+    video_data = [item['video'] for item in batch]
     labels = torch.tensor([item['label'] for item in batch])
 
     text_lengths = torch.tensor([len(seq) for seq in text_data])
@@ -52,7 +46,6 @@ def collate_fn(batch):
         'labels': labels
     }
 
-# --- 5. DEFINE MODEL (FROM 'model.py') ---
 class SimpleFusionModel(nn.Module):
     def __init__(self, text_dim, audio_dim, video_dim, hidden_dim, output_dim, dropout=0.3):
         super(SimpleFusionModel, self).__init__()
@@ -71,13 +64,9 @@ class SimpleFusionModel(nn.Module):
         )
 
     def forward(self, text, audio, video, text_lengths, audio_lengths, video_lengths):
-        
-        # --- THIS IS THE FIX ---
-        # pack_padded_sequence requires lengths to be on the CPU
         text_lengths_cpu = text_lengths.cpu()
         audio_lengths_cpu = audio_lengths.cpu()
         video_lengths_cpu = video_lengths.cpu()
-        # -----------------------
 
         text_packed = pack_padded_sequence(text, text_lengths_cpu, batch_first=True, enforce_sorted=False)
         _, (text_hidden, _) = self.text_lstm(text_packed)
