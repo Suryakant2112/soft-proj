@@ -61,9 +61,12 @@ The core of this project is a `SimpleFusionModel` built in PyTorch. The architec
 
 ### 4.3 Training the Model
 
-To train the model from scratch, run the `train.py` script.
+To train the model from scratch, run the following scripts:
+1. `load_data.py`
+2. `model.py`
+3. `train.py`
 
-This script will load the data, build the model, and begin training. The trained model weights will be saved automatically (e.g., as `best_model.pt`).
+The trained model weights will be saved automatically (here `best_model.pth`).
 
 ### 4.4 Evaluating the Model
 
@@ -81,4 +84,5 @@ After training for 20 epochs, the model achieved the following performance on th
 | **Test Loss (MAE)** | `1.098` |
 | **Test MAE** | `1.107` |
 | **Test Accuracy (Binary)** | `72.01%` |
+
 | **Test F1-Score (Weighted)** | `0.722` |
